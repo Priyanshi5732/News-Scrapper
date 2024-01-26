@@ -11,4 +11,4 @@
 - Clean database design using good practices
 
 ### Images
-![MySQL](https://raw.githubusercontent.com/Priyanshi5732/News-Scrapper/main/images/MySQL%20Workbench.png)
+![MySQL](https://raw.githubusercontent.com/Priyanshi5732/News-Scrapper/main/images/MySQL_Workbench.png)
