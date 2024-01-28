@@ -4,6 +4,12 @@ const mysql = require("mysql2");
 const cronitor = require("cronitor")(process.env.Client_key);
 const cron = require("node-cron");
 const monitor = new cronitor.Monitor('process.env.Monitor_key');
+const bodyParser = require('body-parser');
+const express =require('express');
+const app= express();
+
+app.use(bodyParser.json());
+
 require("dotenv").config(); //.env file that I created
 
 //mysql connection
@@ -62,6 +68,33 @@ cron.schedule(
     timezone: "Asia/Kolkata", // Set your timezone here
   }
 );
+
+//defined API endpoint to get new data by ID
+app.get('/api/titles/:id', (req,res)=>{
+  const newsId= req.params.id;
+
+  //query the database to get data by ID
+  const sql= 'SELECT * FROM college_news where id=?'
+  connection.query(sql, [newsId], (err, results) => {
+    if (err) {
+        console.error('Error retrieving news data:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+    }
+
+    if (results.length === 0) {
+        res.status(404).json({ error: 'Title not found' });
+    } else {
+        res.json(results[0]); // Assuming the ID is unique,so return the first result
+    }
+  });
+});
+
+//good practice for initialising the port
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
 process.on("SIGINT", () => {
   //closes connection after data is inserted
