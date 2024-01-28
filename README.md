@@ -12,3 +12,4 @@
 
 ### Images
 ![MySQL](https://raw.githubusercontent.com/Priyanshi5732/News-Scrapper/main/images/MySQL_Workbench.png)
+![MySQL](https://raw.githubusercontent.com/Priyanshi5732/News-Scrapper/main/images/VSCode.png)
