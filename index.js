@@ -68,7 +68,7 @@ cron.schedule(
 );
 
 //defined API endpoint to get new data by ID
-app.get("/api/titles/:id", (req, res) => {
+app.get("/api/title/:id", (req, res) => {
   const newsId = req.params.id;
 
   //query the database to get data by ID
