@@ -75,7 +75,7 @@ app.get("/api/title/:id", (req, res) => {
   const sql = "SELECT * FROM college_news where id=?";
   connection.query(sql, [newsId], (err, results) => {
     if (err) {
-      console.error("Error retrieving news data:", err);
+      console.error("Error retrieving news title:", err);
       res.status(500).json({ error: "Internal Server Error" });
       return;
     }
@@ -88,12 +88,12 @@ app.get("/api/title/:id", (req, res) => {
   });
 });
 
-//defined API to get whole data
+//defined API endpoint to get whole data
 app.get("/api/titles", (req, res) => {
   const sql = "SELECT * FROM college_news";
   connection.query(sql, (err, results) => {
     if (err) {
-      console.error("Error retrieving news data:", err);
+      console.error("Error retrieving news title:", err);
       res.status(500).json({ error: "Internal Server Error" });
       return;
     }
@@ -101,6 +101,48 @@ app.get("/api/titles", (req, res) => {
     res.json(results); // Return all news data as a JSON array
   });
 });
+
+//defined API endpoint to handle post request
+app.post("/api/titles",(req,res)=>{
+  const { title} = req.body;
+
+  const sql= 'INSERT INTO college_news (title) VALUES (?)';
+  connection.query(sql, [title], (err, result) => {
+    if (err) {
+        console.error('Error creating news article:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+    }
+    res.json({ id: result.insertId });
+    });
+});
+  
+// Define API endpoint to delete a news article by ID
+app.delete('/api/title/:id', (req, res) => {
+  const newsId = req.params.id; // Extract news ID from the request parameters
+
+  // SQL query to delete the news article from the database
+  const sql = 'DELETE FROM college_news WHERE id = ?';
+  connection.query(sql, [newsId], (err, result) => {
+      if (err) {
+          console.error('Error deleting news title:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+      }
+
+      // Check if any rows were affected by the delete operation
+      if (result.affectedRows === 0) {
+          // If no rows were affected, it means the news article with the specified ID was not found
+          res.status(404).json({ error: 'News title not found' });
+          return;
+      }
+
+      // Return success message
+      res.json({ message: 'News title deleted successfully' });
+  });
+});
+
+
 
 //good practice for initialising the port
 const port = process.env.PORT || 3000;
