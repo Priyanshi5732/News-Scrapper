@@ -19,6 +19,7 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT || 3306,
+  
 });
 //connecting to my database
 connection.connect((err) => {
@@ -104,7 +105,7 @@ app.get("/api/titles", (req, res) => {
 
 //defined API endpoint to handle post request
 app.post("/api/titles",(req,res)=>{
-  const { title} = req.body;
+  const {title} = req.body;
 
   const sql= 'INSERT INTO college_news (title) VALUES (?)';
   connection.query(sql, [title], (err, result) => {
