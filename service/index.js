@@ -14,20 +14,30 @@ require("dotenv").config(); //.env file that I created
 
 //mysql connection
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT || 3306,
-  
+  host: process.env.DATABASE_HOST,
+  user: "root",
+  password: "123",
+  database: "priyanshi",
+  port: 3306,
 });
 //connecting to my database
 connection.connect((err) => {
   if (err) {
     console.error("Error connecting to MySQL: " + err.stack);
+    console.log(err);
     return;
   }
   console.log("Connected to MySQL as id " + connection.threadId);
+});
+
+app.get("/init", (req, res) => {
+  const sqlQuery = "";
+
+  database.query(sqlQuery, (err) => {
+    if (err) throw err;
+
+    res.send("Table created!");
+  });
 });
 
 cron.schedule(
@@ -104,49 +114,47 @@ app.get("/api/titles", (req, res) => {
 });
 
 //defined API endpoint to handle post request
-app.post("/api/titles",(req,res)=>{
-  const {title} = req.body;
+app.post("/api/titles", (req, res) => {
+  const { title } = req.body;
 
-  const sql= 'INSERT INTO college_news (title) VALUES (?)';
+  const sql = "INSERT INTO college_news (title) VALUES (?)";
   connection.query(sql, [title], (err, result) => {
     if (err) {
-        console.error('Error creating news article:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-        return;
+      console.error("Error creating news article:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
     }
     res.json({ id: result.insertId });
-    });
-});
-  
-// Define API endpoint to delete a news article by ID
-app.delete('/api/title/:id', (req, res) => {
-  const newsId = req.params.id; // Extract news ID from the request parameters
-
-  // SQL query to delete the news article from the database
-  const sql = 'DELETE FROM college_news WHERE id = ?';
-  connection.query(sql, [newsId], (err, result) => {
-      if (err) {
-          console.error('Error deleting news title:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-      }
-
-      // Check if any rows were affected by the delete operation
-      if (result.affectedRows === 0) {
-          // If no rows were affected, it means the news article with the specified ID was not found
-          res.status(404).json({ error: 'News title not found' });
-          return;
-      }
-
-      // Return success message
-      res.json({ message: 'News title deleted successfully' });
   });
 });
 
+// Define API endpoint to delete a news article by ID
+app.delete("/api/title/:id", (req, res) => {
+  const newsId = req.params.id; // Extract news ID from the request parameters
 
+  // SQL query to delete the news article from the database
+  const sql = "DELETE FROM college_news WHERE id = ?";
+  connection.query(sql, [newsId], (err, result) => {
+    if (err) {
+      console.error("Error deleting news title:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+
+    // Check if any rows were affected by the delete operation
+    if (result.affectedRows === 0) {
+      // If no rows were affected, it means the news article with the specified ID was not found
+      res.status(404).json({ error: "News title not found" });
+      return;
+    }
+
+    // Return success message
+    res.json({ message: "News title deleted successfully" });
+  });
+});
 
 //good practice for initialising the port
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

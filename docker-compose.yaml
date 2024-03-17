@@ -1,42 +1,18 @@
-version: '3.7'
+version: '3.1'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  security:
+    build: ./service
     ports:
-      - 3000:3000
+     - "3000:3000"
     depends_on:
-      mysqldb:
-        condition: service_healthy
+     - db
     environment:
-      - MYSQL_DB_HOST=mysqldb 
-      - MYSQL_DB_PORT=3306
-      - MYSQL_DB_NAME=$DB_DATABASE 
-      - MYSQL_DB_USER=$DB_USER 
-      - MYSQL_DB_PASSWORD=$DB_PASSWORD 
-      
-      
-    networks:
-      - nodejs-mysql-network
-  mysqldb:
-    image: mysql:8.0.33
-    ports:
-      - 3306:3306
-    environment:
-      - DB_DATABASE=${DB_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+     - DATABASE_HOST=db
     volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - nodejs-mysql-network
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      retries: 10
-      interval: 3s
-      timeout: 30s
-volumes:
-  mysql-data:
-networks:
-  nodejs-mysql-network:
-    name: nodejs-mysql-network
+     - ./service:/app
+  db:
+    build: ./mysql-service
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3318:3306
