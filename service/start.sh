@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/sh 
 sleep 40
 
 cd /app/
